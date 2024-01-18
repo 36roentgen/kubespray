@@ -23,10 +23,8 @@ vagrant/
 plugins/mitogen
 
 # Ansible inventory
-inventory/*
 !inventory/local
 !inventory/sample
-inventory/*/artifacts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -36,11 +34,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
-credentials/
 develop-eggs/
-dist/
-downloads/
 eggs/
 .eggs/
 parts/
@@ -102,8 +96,6 @@ target/
 .env
 
 # virtualenv
-venv/
-ENV/
 
 # molecule
 roles/**/molecule/**/__pycache__/

@@ -1,0 +1,37 @@
+- name: Custom properties
+  hosts: all
+  gather_facts: True
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - prometheus.prometheus.node_exporter
+  pre_tasks:
+    - name: Create node_exporter cert dir
+      file:
+        path: "/etc/node_exporter"
+        state: directory
+        owner: root
+        group: root
+    - name: Create private key (RSA, 4096 bits)
+      community.crypto.openssl_privatekey:
+        path: /etc/node_exporter/tls.key
+
+    - name: Create certificate signing request (CSR) for self-signed certificate
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: /etc/node_exporter/tls.key
+        common_name: cluster.galacticdominator.com
+        organization_name: Galactic Domination, Inc.
+        subject_alt_name:
+          - "DNS:*.cluster.galacticdominator.com"
+      register: csr
+    - name: Create self-signed certificate from CSR
+      community.crypto.x509_certificate:
+        path: /etc/node_exporter/tls.cert
+        csr_content: "{{ csr.csr }}"
+        privatekey_path: /etc/node_exporter/tls.key
+        provider: selfsigned
+
+  # - name: Import role prometheus.node_exporter
+  #   ansible.builtin.import_role:
+    #     name: prometheus.prometheus.node_exporter
+- name: Install Kubernetes
+  ansible.builtin.import_playbook: playbooks/cluster.yml

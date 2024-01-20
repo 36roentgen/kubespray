@@ -1,4 +1,6 @@
 ---
+docker_storage_options: -s overlay2
+
 ## Directory where the binaries will be installed
 bin_dir: /usr/local/bin
 
